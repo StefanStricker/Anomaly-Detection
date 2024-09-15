@@ -47,7 +47,7 @@ if __name__ == "__main__":
         # Wait before sending the next message
         time.sleep(2)
 
-        # Poll to handle delivery reports (this ensures messages are sent)
+        # Poll to handle delivery reports
         producer.poll(0)
         
         producer.flush()

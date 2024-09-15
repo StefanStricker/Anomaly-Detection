@@ -87,6 +87,5 @@ def metrics():
 # Start application
 if __name__ == "__main__":
     # Start Prometheus client on a different port
-    start_http_server(8000)  # Prometheus will scrape metrics from this port
-
+    start_http_server(8000)  
     app.run(host="0.0.0.0", port=5000)

@@ -1,0 +1,7 @@
+Flask==3.0.0
+Werkzeug==3.0.0 
+influxdb-client==1.46.0
+confluent-kafka==2.5.3
+prometheus-client==0.20.0
+numpy==2.0.0
+scikit-learn==1.5.1

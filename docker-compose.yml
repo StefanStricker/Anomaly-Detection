@@ -1,0 +1,79 @@
+version: '3'
+
+services:
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+      - "8000:8000"
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - "influxdb"  
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  producer:
+    build:
+      context: .
+      dockerfile: Dockerfile.producer
+    depends_on:
+      - kafka
+
+  consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile.consumer
+    depends_on:
+      - kafka
+      - flask-app
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - /home/sera/Documents/Anomaly_Detection/grafana_data:/var/lib/grafana
+    depends_on:
+      - influxdb
+
+
+  influxdb:
+    image: influxdb:latest
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_TOKEN=BSFWXW9bg9__lm0FhTTBsOwXRcldwFKHcVnDUWKxuP2RKDLcZTAW7pdWcBtBBY8_E--LggQHkzL6sp7644jhiw==
+      - INFLUXDB_ORG=Me                   
+      - INFLUXDB_BUCKET=Anomalies          
+    volumes:
+      - /var/lib/influxdb:/var/lib/influxdb2
+         
+       
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - flask-app
+      - influxdb

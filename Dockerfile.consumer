@@ -1,0 +1,14 @@
+# Use Python base image
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /usr/src/app
+
+# Copy all the current directory contents to the container
+COPY . .
+
+# Install dependencies
+RUN pip install confluent-kafka requests
+
+# Run the consumer.py script
+CMD ["python", "consumer.py"]

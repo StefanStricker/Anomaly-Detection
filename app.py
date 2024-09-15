@@ -6,6 +6,7 @@ from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 from datetime import datetime
 import uuid
+import config
 
 # Load model
 model = pickle.load(open("ml_model.pkl", "rb"))
@@ -24,9 +25,9 @@ PREDICTION_TIME = Histogram('flask_app_prediction_processing_time', 'Time taken 
 ANOMALIES = Counter('flask_app_anomalies_total', 'Total number of anomalies detected')  
 
 # InfluxDB client setup
-bucket = "Anomalies"  
-org = "f66fff8899cab44c" 
-token = "BSFWXW9bg9__lm0FhTTBsOwXRcldwFKHcVnDUWKxuP2RKDLcZTAW7pdWcBtBBY8_E--LggQHkzL6sp7644jhiw=="  
+bucket = config.bucket
+org = config.org 
+token = config.token
 url = "http://influxdb:8086"
 
 client = InfluxDBClient(url=url, token=token, org=org)
